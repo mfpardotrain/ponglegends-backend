@@ -14,7 +14,7 @@ public class AbilityList {
 
     public AbilityList(Integer fromId) {
         this.fromId = fromId;
-        this.activeAbility = new ArrayList<Ability>();
+        this.activeAbility = new ArrayList<>();
     }
 
     public boolean isUpdating() {
@@ -29,22 +29,22 @@ public class AbilityList {
                 this.activeAbility.add(q);
                 break;
             }
-            case "w": {
-                Ability w = new Ability("w", this.fromId, targetLocation, startingLocation);
-                w.setCooldownTime((double) 0);
-                this.activeAbility.add(w);
-                break;
-            }
             case "e": {
                 Ability e = new Ability("e", this.fromId, targetLocation, startingLocation);
                 e.setCooldownTime((double) 0);
                 this.activeAbility.add(e);
                 break;
             }
-            case "r": {
-                Ability r = new Ability("r", this.fromId, targetLocation, startingLocation);
-                r.setCooldownTime((double) 0);
-                this.activeAbility.add(r);
+            case "1": {
+                Ability one = new Ability("1", this.fromId, targetLocation, startingLocation);
+                one.setCooldownTime((double) 0);
+                this.activeAbility.add(one);
+                break;
+            }
+            case "3": {
+                Ability three = new Ability("3", this.fromId, targetLocation, startingLocation);
+                three.setCooldownTime((double) 0);
+                this.activeAbility.add(three);
                 break;
             }
         }

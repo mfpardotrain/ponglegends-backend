@@ -62,7 +62,7 @@ public class GameState {
                     });
                 }
             });
-            if (champion.getIsUpdating()) {
+            if (champion.isMoving()) {
                 outCoord.add(champion.calcDistance(tickRate));
             }
             activeAbility.forEach(ability -> {

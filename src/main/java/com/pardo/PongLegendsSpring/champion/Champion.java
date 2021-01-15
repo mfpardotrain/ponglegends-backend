@@ -27,6 +27,10 @@ public class Champion {
     private Integer team;
     private Double health;
     private Double maxHealth;
+    private Double up;
+    private Double down;
+    private Double left;
+    private Double right;
 
     public Champion(String name, Integer fromId, Integer team) {
         this.championName = name;
@@ -42,30 +46,42 @@ public class Champion {
         this.team = team;
         this.health = 100.0;
         this.maxHealth = 100.0;
+        this.up = 0.0;
+        this.down = 0.0;
+        this.left = 0.0;
+        this.right = 0.0;
     }
 
     public Coordinate calcDistance(Double tickRate) {
         this.prevLocation = this.location;
         Double x1 = this.location.getX();
         Double y1 = this.location.getY();
-        Double x2 = this.targetLocation.getX();
-        Double y2 = this.targetLocation.getY();
         Double moveRate = this.moveRate;
 
-        double distance = Math.sqrt((x2-x1)*(x2-x1)+(y2-y1)*(y2-y1));
-        double totalTime = distance / moveRate;
-        Double xOut = x1 + tickRate / 1000 * (x2-x1) / totalTime;
-        Double yOut = y1 + tickRate / 1000 * (y2-y1) / totalTime;
+        Double xOut = x1;
+        Double yOut = y1;
+
+        if (this.up.equals(1.0)) {
+            yOut = y1 - tickRate * moveRate / 1000;
+        }
+        if (this.down.equals(1.0)) {
+            yOut = y1 + tickRate * moveRate / 1000;
+        }
+        if (this.left.equals(1.0)) {
+            xOut = x1 - tickRate * moveRate / 1000;
+        }
+        if (this.right.equals(1.0)) {
+            xOut = x1 + tickRate * moveRate / 1000;
+        }
 
         Coordinate outCoord = Coordinate.builder().x(xOut).y(yOut).name("champion").fromId(this.fromId).build();
-
-        if (distance < (moveRate / 1000 * tickRate)) {
-            this.isUpdating = false;
-            outCoord = this.targetLocation;
-        }
         this.setLocation(outCoord);
 
         return outCoord;
+    }
+
+    public boolean isMoving() {
+        return this.up.equals(1.0) || this.down.equals(1.0) || this.left.equals(1.0) || this.right.equals(1.0);
     }
 
     public boolean isEnemy(Champion champion) {
@@ -91,7 +107,7 @@ public class Champion {
     }
 
     public boolean getAllIsUpdating() {
-        return (this.isUpdating | abilityList.isUpdating()) && !this.isDead();
+        return (this.isMoving() || this.isUpdating || abilityList.isUpdating()) && !this.isDead();
     }
 
 }

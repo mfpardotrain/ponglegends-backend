@@ -39,16 +39,10 @@ public class EchoThread extends Thread {
                 gameState = command.evaluateCommands(gameState);
             }
 
-            if (gameState.getTimeOpen() % 500 == 0) {
-                System.out.println("send gamestate1");
-                byte[] outMess = broadcast(gameState.getOutArray());
-                out.write(outMess, 0, outMess.length);
-            }
             while (gameState.getChampionList().isUpdating()) {
-                if (gameState.getTimeOpen() % 1000 == 0) {
+                if (gameState.getTimeOpen() % 500 == 0) {
                     System.out.println("send gamestate2");
                     byte[] outMess = broadcast(gameState.currentStateMessage());
-                    System.out.println(gameState.currentStateMessage());
                     out.write(outMess, 0, outMess.length);
                 }
 

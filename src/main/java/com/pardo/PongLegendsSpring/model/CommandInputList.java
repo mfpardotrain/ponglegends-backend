@@ -11,30 +11,33 @@ public class CommandInputList {
     private Coordinate coordinate;
 
     public void executeInput(Champion champion) {
-
         switch (key) {
-            case "3": {
-                Coordinate targetCoordinate = Coordinate.builder()
-                        .x(coordinate.getX())
-                        .y(coordinate.getY())
-                        .name("champion")
-                        .fromId(champion.getFromId())
-                        .build();
-                champion.setTargetLocation(targetCoordinate);
-                champion.setIsUpdating(true);
+            // Movement
+            case "w":
+                champion.setUp(coordinate.getX());
                 break;
-            }
+            case "s":
+                champion.setDown(coordinate.getX());
+                break;
+            case "a":
+                champion.setLeft(coordinate.getX());
+                break;
+            case "d":
+                champion.setRight(coordinate.getX());
+                break;
+
+            // Abilities
             case "q":
                 this.executeAbility("q", champion);
-                break;
-            case "w":
-                this.executeAbility("w", champion);
                 break;
             case "e":
                 this.executeAbility("e", champion);
                 break;
-            case "r":
-                this.executeAbility("r", champion);
+            case "1":
+                this.executeAbility("1", champion);
+                break;
+            case "3":
+                this.executeAbility("3", champion);
                 break;
         }
     }
@@ -51,4 +54,5 @@ public class CommandInputList {
             abilityList.useAbility(name, targetCoordinate, champion.getLocation());
         }
     }
+
 }
