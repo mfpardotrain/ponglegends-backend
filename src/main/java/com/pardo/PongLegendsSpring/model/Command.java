@@ -1,12 +1,15 @@
 package com.pardo.PongLegendsSpring.model;
 
 import com.google.gson.Gson;
+import com.google.gson.stream.JsonReader;
 import com.pardo.PongLegendsSpring.champion.Champion;
 import com.pardo.PongLegendsSpring.champion.ChampionList;
 import com.pardo.PongLegendsSpring.server.GameState;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.io.StringReader;
 
 @Data
 @AllArgsConstructor
@@ -17,7 +20,11 @@ public class Command {
 
     public Command(String commandJson) {
         try {
-            this.commandInputList = new Gson().fromJson(commandJson, CommandInputList.class);
+            // TODO: Does not completely fix the malformed json
+            Gson gson = new Gson();
+            JsonReader reader = new JsonReader(new StringReader(commandJson));
+            reader.setLenient(true);
+            this.commandInputList = gson.fromJson(reader, CommandInputList.class);
         }
         catch(Exception e) {
             System.out.println(e);
@@ -25,6 +32,7 @@ public class Command {
     }
 
     public GameState evaluateCommands(GameState gameState) {
+
         Integer fromId = this.commandInputList.getFromId();
         ChampionList championList = gameState.getChampionList();
 

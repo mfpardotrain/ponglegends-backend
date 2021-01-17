@@ -36,30 +36,41 @@ public class EchoThread extends Thread {
             }
             if (message.length() > 0) {
                 Command command = new Command(message);
-                gameState = command.evaluateCommands(gameState);
+                if (command.getCommandInputList().getKey().equals("Reset")) {
+                    gameState.resetGamestate();
+                } else {
+                    gameState = command.evaluateCommands(gameState);
+                }
             }
 
-            while (gameState.getChampionList().isUpdating()) {
-                if (gameState.getTimeOpen() % 500 == 0) {
-                    System.out.println("send gamestate2");
-                    byte[] outMess = broadcast(gameState.currentStateMessage());
-                    out.write(outMess, 0, outMess.length);
-                }
+        while (gameState.getChampionList().isUpdating()) {
+            // TODO: this still only sends when running
+            if (gameState.getTimeOpen() % 2000 == 0) {
+                byte[] outMess = broadcast(gameState.currentStateMessage());
+                out.write(outMess, 0, outMess.length);
+            }
 
-                if (in.available() > 0) {
-                    String checkNew = decodeMessage(in);
+            if (in.available() > 0) {
+                String checkNew = decodeMessage(in);
+                if (checkNew.equals("Reset")) {
+                    System.out.println("Equals reset");
+                    gameState.resetGamestate();
+                } else {
                     Command command = new Command(checkNew);
                     gameState = command.evaluateCommands(gameState);
                 }
-                String outArray = gameState.getOutArray();
-                if (outArray != null) {
-                    byte[] outMess = broadcast(outArray);
-                    out.write(outMess, 0, outMess.length);
-                }
-                Thread.sleep(10);
+
             }
+            String outArray = gameState.getOutArray();
+            if (outArray != null) {
+                byte[] outMess = broadcast(outArray);
+                out.write(outMess, 0, outMess.length);
+            }
+            Thread.sleep(10);
         }
     }
+
+}
 
     public byte[] broadcast(String mess) {
         byte[] rawData = mess.getBytes();
@@ -136,10 +147,10 @@ public class EchoThread extends Thread {
 
     }
 
-    private String decodeMessage(InputStream ireader) {
+    private String decodeMessage(InputStream reader) {
         try {
             byte[] data = new byte[10240];
-            int size = ireader.read(data);
+            int size = reader.read(data);
 
             if (size == -1) return null;
             byte[] decoded = new byte[size - 6];

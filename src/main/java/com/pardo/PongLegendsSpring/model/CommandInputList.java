@@ -15,15 +15,27 @@ public class CommandInputList {
             // Movement
             case "w":
                 champion.setUp(coordinate.getX());
+                if (coordinate.getX().equals(1.0)) {
+                    champion.setDown(0.0);
+                }
                 break;
             case "s":
                 champion.setDown(coordinate.getX());
+                if (coordinate.getX().equals(1.0)) {
+                    champion.setUp(0.0);
+                }
                 break;
             case "a":
                 champion.setLeft(coordinate.getX());
+                if (coordinate.getX().equals(1.0)) {
+                    champion.setRight(0.0);
+                }
                 break;
             case "d":
                 champion.setRight(coordinate.getX());
+                if (coordinate.getX().equals(1.0)) {
+                    champion.setLeft(0.0);
+                }
                 break;
 
             // Abilities

@@ -20,14 +20,16 @@ public class Main {
     }
 
     public void recieveMessage(String message) throws IOException {
+        GameStateThread GST = null;
         System.out.println(message);
         if (this.message == null) {
             this.gameState = new GameState();
             Server server = new Server();
-            GameStateThread GST = new GameStateThread(this.gameState);
+            GST = new GameStateThread(this.gameState);
             GST.start();
             server.start(8082, this.gameState);
         }
+
         this.message = message;
     }
 }

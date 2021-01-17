@@ -32,8 +32,8 @@ public class Ability {
         this.moveRate = 200.0;
         this.isUpdating = true;
         this.fromId = fromId;
-        this.cooldownTime = 0.0;
-        this.cooldownDuration = 0.0;
+        this.cooldownTime = 1.0;
+        this.cooldownDuration = 1.0;
         this.range = 200.0;
         this.width = (double) 10;
         this.height = (double) 10;
