@@ -110,4 +110,10 @@ public class Champion {
         return (this.isMoving() || this.isUpdating || abilityList.isUpdating()) && !this.isDead();
     }
 
+    public Coordinate collide() {
+        this.setIsUpdating(false);
+        this.setLocation(this.getPrevLocation());
+        return this.prevLocation;
+    }
+
 }

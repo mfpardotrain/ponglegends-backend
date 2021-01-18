@@ -15,6 +15,7 @@ public class GameState {
     private ChampionList championList;
     private String outArray;
     private Integer timeOpen = 0;
+    private StaticGamestateObject terrain;
 
     public GameState() {
         Champion championRedOne = new Champion("red", 1, 1);
@@ -28,11 +29,13 @@ public class GameState {
         championRedZero.setLocation(Coordinate.builder().name("red").x(50.0).y(50.0).fromId(0).build());
         championRedOne.setLocation(Coordinate.builder().name("red").x(50.0).y(100.0).fromId(1).build());
         championRedTwo.setLocation(Coordinate.builder().name("red").x(50.0).y(150.0).fromId(2).build());
-        championBlueThree.setLocation(Coordinate.builder().name("blue").x(500.0).y(50.0).fromId(3).build());
-        championBlueFour.setLocation(Coordinate.builder().name("blue").x(500.0).y(100.0).fromId(4).build());
-        championBlueFive.setLocation(Coordinate.builder().name("blue").x(500.0).y(150.0).fromId(5).build());
+        championBlueThree.setLocation(Coordinate.builder().name("blue").x(750.0).y(50.0).fromId(3).build());
+        championBlueFour.setLocation(Coordinate.builder().name("blue").x(750.0).y(100.0).fromId(4).build());
+        championBlueFive.setLocation(Coordinate.builder().name("blue").x(750.0).y(150.0).fromId(5).build());
         this.championList = new ChampionList(championRedZero, championRedOne, championRedTwo,
                                              championBlueThree, championBlueFour, championBlueFive);
+
+        this.terrain = new StaticGamestateObject();
     }
 
     public synchronized void evaluateGamestate(double tickRate) {
@@ -46,9 +49,7 @@ public class GameState {
             activeAbility.removeIf(ability -> (!ability.getIsUpdating() && !ability.onCooldown()));
             this.championList.toList().stream().filter(x -> !x.equals(champion)).forEach(gameChampion -> {
                 if (champion.getBounds().intersects(gameChampion.getBounds())) {
-                    champion.setIsUpdating(false);
-                    champion.setLocation(champion.getPrevLocation());
-                    outCoord.add(champion.getPrevLocation());
+                    outCoord.add(champion.collide());
                 }
                 if (!activeAbility.isEmpty()) {
                     activeAbility.forEach(ability -> {
@@ -62,6 +63,13 @@ public class GameState {
                     });
                 }
             });
+
+            System.out.println(this.terrain.getTerrain().contains(champion.getBounds()));
+            System.out.println(champion.getLocation());
+            if (!this.terrain.getTerrain().contains(champion.getBounds())) {
+                outCoord.add(champion.collide());
+            }
+
             if (champion.isMoving()) {
                 outCoord.add(champion.calcDistance(tickRate));
             }
