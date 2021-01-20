@@ -21,12 +21,13 @@ public class Snipe extends Ability {
     }
 
     public void startCast(Champion castingChampion) {
-        this.prevMoveRate = castingChampion.getMoveRate();
-        castingChampion.setMoveRate(0.0);
+        castingChampion.setCanMove(false);
+        castingChampion.setXSpeed(0.0);
+        castingChampion.setYSpeed(0.0);
     }
 
     public void endCast(Champion castingChampion) {
-        castingChampion.setMoveRate(this.prevMoveRate);
+        castingChampion.setCanMove(true);
     }
 
     public Coordinate activateEffect(Champion targetChampion, Champion castingChampion) {

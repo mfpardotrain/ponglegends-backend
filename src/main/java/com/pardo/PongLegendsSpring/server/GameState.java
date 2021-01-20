@@ -71,7 +71,7 @@ public class GameState {
                 outCoord.add(champion.collide());
             }
 
-            if (champion.isMoving()) {
+            if (champion.isMoving() && champion.getCanMove()) {
                 outCoord.add(champion.calcDistance(tickRate));
             }
             activeAbility.forEach(ability -> {

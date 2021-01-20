@@ -18,7 +18,10 @@ public class Champion {
     private Coordinate location;
     private Coordinate targetLocation;
     private Integer fromId;
-    private Double moveRate;
+    private Double maxSpeed;
+    private Double xSpeed;
+    private Double ySpeed;
+    private Double acceleration;
     private Boolean isUpdating;
     private Double width;
     private Double height;
@@ -31,6 +34,7 @@ public class Champion {
     private Double down;
     private Double left;
     private Double right;
+    private Boolean canMove;
 
     public Champion(String name, Integer fromId, Integer team) {
         this.championName = name;
@@ -38,10 +42,13 @@ public class Champion {
         this.targetLocation = Coordinate.builder().x(100.0).y(100.0).name("champion").build();
         this.prevLocation = this.location;
         this.fromId = fromId;
-        this.moveRate = 100.0;
+        this.maxSpeed = 100.0;
+        this.xSpeed = 0.0;
+        this.ySpeed = 0.0;
+        this.acceleration = 2.0;
         this.isUpdating = false;
-        this.width = (double) 30;
-        this.height = (double) 30;
+        this.width = 30.0;
+        this.height = 30.0;
         this.abilityList = new AbilityList(fromId);
         this.team = team;
         this.health = 100.0;
@@ -50,29 +57,52 @@ public class Champion {
         this.down = 0.0;
         this.left = 0.0;
         this.right = 0.0;
+        this.canMove = true;
     }
 
     public Coordinate calcDistance(Double tickRate) {
         this.prevLocation = this.location;
         Double x1 = this.location.getX();
         Double y1 = this.location.getY();
-        Double moveRate = this.moveRate;
-
-        Double xOut = x1;
-        Double yOut = y1;
 
         if (this.up.equals(1.0)) {
-            yOut = y1 - tickRate * moveRate / 1000;
+            if (this.ySpeed > -this.maxSpeed) {
+                this.ySpeed = this.ySpeed - this.acceleration;
+            }
         }
         if (this.down.equals(1.0)) {
-            yOut = y1 + tickRate * moveRate / 1000;
+            if (this.ySpeed < this.maxSpeed) {
+                this.ySpeed = this.ySpeed + this.acceleration;
+            }
         }
         if (this.left.equals(1.0)) {
-            xOut = x1 - tickRate * moveRate / 1000;
+            if (this.xSpeed > -this.maxSpeed) {
+                this.xSpeed = this.xSpeed - this.acceleration;
+            }
         }
         if (this.right.equals(1.0)) {
-            xOut = x1 + tickRate * moveRate / 1000;
+            if (this.xSpeed < this.maxSpeed) {
+                this.xSpeed = this.xSpeed + this.acceleration;
+            }
         }
+
+        if (this.right.equals(0.0) && this.left.equals(0.0)) {
+            if (this.xSpeed > 0) {
+                this.xSpeed = this.xSpeed - this.acceleration;
+            } else {
+                this.xSpeed = this.xSpeed + this.acceleration;
+            }
+        }
+
+        if (this.up.equals(0.0) && this.down.equals(0.0)) {
+            if (this.ySpeed > 0) {
+                this.ySpeed = this.ySpeed - this.acceleration;
+            } else {
+                this.ySpeed = this.ySpeed + this.acceleration;
+            }
+        }
+        Double yOut = y1 + tickRate * this.ySpeed / 1000;
+        Double xOut = x1 + tickRate * this.xSpeed / 1000;
 
         Coordinate outCoord = Coordinate.builder().x(xOut).y(yOut).name("champion").fromId(this.fromId).build();
         this.setLocation(outCoord);
@@ -81,7 +111,7 @@ public class Champion {
     }
 
     public boolean isMoving() {
-        return this.up.equals(1.0) || this.down.equals(1.0) || this.left.equals(1.0) || this.right.equals(1.0);
+        return this.up.equals(1.0) || this.down.equals(1.0) || this.left.equals(1.0) || this.right.equals(1.0) || this.xSpeed !=0 || this.ySpeed !=0;
     }
 
     public boolean isEnemy(Champion champion) {

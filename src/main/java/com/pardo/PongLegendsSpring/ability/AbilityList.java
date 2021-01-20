@@ -33,8 +33,8 @@ public class AbilityList {
             }
             case "e": {
                 Ability e = new AutoAttack("e", this.fromId, targetLocation, startingLocation);
-                Ability e1 = new AutoAttack("e", this.fromId, this.calcAngle(targetLocation, startingLocation, 20.0), startingLocation);
-                Ability e2 = new AutoAttack("e", this.fromId, this.calcAngle(targetLocation, startingLocation, 340.0), startingLocation);
+                Ability e1 = new AutoAttack("e", this.fromId, this.calcAngle(targetLocation, startingLocation, 10.0), startingLocation);
+                Ability e2 = new AutoAttack("e", this.fromId, this.calcAngle(targetLocation, startingLocation, 350.0), startingLocation);
                 e.setCooldownTime((double) 0);
                 e1.setCooldownTime((double) 0);
                 e2.setCooldownTime((double) 0);
