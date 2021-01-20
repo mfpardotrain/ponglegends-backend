@@ -26,37 +26,29 @@ public class AbilityList {
         switch (name) {
             case "q": {
                 Ability q = new AutoAttack("q", this.fromId, targetLocation, startingLocation);
-                q.setCooldownTime((double) 0);
-                q.setCastTime((double) 0);
                 this.activeAbility.add(q);
                 break;
             }
             case "e": {
                 Ability e = new AutoAttack("e", this.fromId, targetLocation, startingLocation);
                 Ability e1 = new AutoAttack("e", this.fromId, this.calcAngle(targetLocation, startingLocation, 10.0), startingLocation);
-                Ability e2 = new AutoAttack("e", this.fromId, this.calcAngle(targetLocation, startingLocation, 350.0), startingLocation);
-                e.setCooldownTime((double) 0);
-                e1.setCooldownTime((double) 0);
-                e2.setCooldownTime((double) 0);
-                e.setCastTime((double) 0);
-                e1.setCastTime((double) 0);
-                e2.setCastTime((double) 0);
+                Ability e2 = new AutoAttack("e", this.fromId, this.calcAngle(targetLocation, startingLocation, 20.0), startingLocation);
+                Ability e3 = new AutoAttack("e", this.fromId, this.calcAngle(targetLocation, startingLocation, 340.0), startingLocation);
+                Ability e4 = new AutoAttack("e", this.fromId, this.calcAngle(targetLocation, startingLocation, 350.0), startingLocation);
                 this.activeAbility.add(e);
                 this.activeAbility.add(e1);
                 this.activeAbility.add(e2);
+                this.activeAbility.add(e3);
+                this.activeAbility.add(e4);
                 break;
             }
             case "1": {
                 Ability one = new AutoAttack("1", this.fromId, targetLocation, startingLocation);
-                one.setCooldownTime((double) 0);
-                one.setCastTime((double) 0);
                 this.activeAbility.add(one);
                 break;
             }
             case "3": {
                 Ability three = new Snipe("3", this.fromId, targetLocation, startingLocation);
-                three.setCooldownTime((double) 0);
-                three.setCastTime((double) 0);
                 this.activeAbility.add(three);
                 break;
             }

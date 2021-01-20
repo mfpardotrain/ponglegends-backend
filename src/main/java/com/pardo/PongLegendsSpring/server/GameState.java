@@ -26,12 +26,12 @@ public class GameState {
         Champion championBlueFour = new Champion("blue", 4, 0);
         Champion championBlueFive = new Champion("blue", 5, 0);
 
-        championRedZero.setLocation(Coordinate.builder().name("red").x(50.0).y(50.0).fromId(0).build());
-        championRedOne.setLocation(Coordinate.builder().name("red").x(50.0).y(100.0).fromId(1).build());
-        championRedTwo.setLocation(Coordinate.builder().name("red").x(50.0).y(150.0).fromId(2).build());
-        championBlueThree.setLocation(Coordinate.builder().name("blue").x(750.0).y(50.0).fromId(3).build());
-        championBlueFour.setLocation(Coordinate.builder().name("blue").x(750.0).y(100.0).fromId(4).build());
-        championBlueFive.setLocation(Coordinate.builder().name("blue").x(750.0).y(150.0).fromId(5).build());
+        championRedZero.setLocation(Coordinate.builder().name("red").x(50.0).y(125.0).fromId(0).build());
+        championRedOne.setLocation(Coordinate.builder().name("red").x(50.0).y(275.0).fromId(1).build());
+        championRedTwo.setLocation(Coordinate.builder().name("red").x(50.0).y(425.0).fromId(2).build());
+        championBlueThree.setLocation(Coordinate.builder().name("blue").x(800.0).y(125.0).fromId(3).build());
+        championBlueFour.setLocation(Coordinate.builder().name("blue").x(800.0).y(275.0).fromId(4).build());
+        championBlueFive.setLocation(Coordinate.builder().name("blue").x(800.0).y(425.0).fromId(5).build());
         this.championList = new ChampionList(championRedZero, championRedOne, championRedTwo,
                                              championBlueThree, championBlueFour, championBlueFive);
 
@@ -46,7 +46,9 @@ public class GameState {
 
         updatingChampion.forEach(champion -> {
             List<Ability> activeAbility = champion.getActiveAbility();
+            List<Ability> activeEffect = champion.getEffectList();
             activeAbility.removeIf(ability -> (!ability.getIsUpdating() && !ability.onCooldown()));
+            activeEffect.removeIf(ability -> (!ability.getIsUpdating() && !ability.onCooldown()));
             this.championList.toList().stream().filter(x -> !x.equals(champion)).forEach(gameChampion -> {
                 if (champion.getBounds().intersects(gameChampion.getBounds())) {
                     outCoord.add(champion.collide());
@@ -67,6 +69,9 @@ public class GameState {
                 }
             });
 
+            processAbility(activeAbility, champion, tickRate, outCoord, false);
+            processAbility(activeEffect, champion, tickRate, outCoord, true);
+
             if (!this.terrain.getTerrain().contains(champion.getBounds())) {
                 outCoord.add(champion.collide());
             }
@@ -74,22 +79,29 @@ public class GameState {
             if (champion.isMoving() && champion.getCanMove()) {
                 outCoord.add(champion.calcDistance(tickRate));
             }
-            activeAbility.forEach(ability -> {
-                if (!ability.atLocation() && (ability.getCastDuration() <= (ability.getCastTime()))) {
-                    ability.endCast(champion);
-                    outCoord.add(ability.calcDistance(tickRate));
-                }
-                if (ability.getCastTime() == 0) {
-                    ability.startCast(champion);
-                }
-                if (ability.getCastTime() < ability.getCastDuration()) {
-                    ability.tickCastTime(tickRate);
-                }
-                ability.tickCooldown(tickRate);
-            });
+
         });
 
         this.outArray = new Gson().toJson(outCoord);
+    }
+
+    public void processAbility(List<Ability> abilityList, Champion champion, Double tickRate, List<Coordinate> outCoord, Boolean isEffect) {
+        abilityList.forEach(ability -> {
+            if (ability.getCastTime() == 0) {
+                ability.startCast(champion);
+            }
+            if (ability.getCastDuration() <= (ability.getCastTime()) && !ability.getHasCasted()) {
+                ability.endCast(champion);
+            }
+            if (!ability.atLocation() && ability.getHasCasted() && !isEffect) {
+                outCoord.add(ability.calcDistance(tickRate));
+            }
+            if (ability.getCastTime() < ability.getCastDuration()) {
+                ability.tickCastTime(tickRate);
+            }
+            ability.tickCooldown(tickRate);
+        });
+
     }
 
     public String currentStateMessage() {

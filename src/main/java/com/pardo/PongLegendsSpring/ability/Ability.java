@@ -28,6 +28,9 @@ public class Ability {
     private Double range;
     private Double castTime;
     private Double castDuration;
+    private Double castEffectTime;
+    private Boolean hasCastEffect;
+    private Boolean hasCasted;
 
     public Ability(String name, Integer fromId, Coordinate targetLocation, Coordinate startingLocation) {
         this.abilityName = name;
@@ -39,10 +42,11 @@ public class Ability {
         this.cooldownTime = 1.0;
         this.cooldownDuration = 1.0;
         this.range = 200.0;
-        this.width = (double) 10;
-        this.height = (double) 10;
-        this.castTime = (double) 0;
-        this.castDuration = (double) 0;
+        this.width = 10.0;
+        this.height = 10.0;
+        this.castTime = 0.0;
+        this.castDuration = 0.0;
+        this.hasCasted = false;
     }
 
     public Coordinate calcDistance(Double tickRate) {
@@ -102,7 +106,7 @@ public class Ability {
     }
 
     public void startCast(Champion castingChampion) {}
-    public void endCast(Champion castingChampion) {}
+    public void endCast(Champion castingChampion) {setHasCasted(true);}
 
     public Coordinate activateEffect(Champion targetChampion, Champion castingChampion) {
         Rectangle intersection = this.getBounds().intersection(targetChampion.getBounds());

@@ -21,11 +21,13 @@ public class Champion {
     private Double maxSpeed;
     private Double xSpeed;
     private Double ySpeed;
-    private Double acceleration;
+    private Double xAcceleration;
+    private Double yAcceleration;
     private Boolean isUpdating;
     private Double width;
     private Double height;
     private AbilityList abilityList;
+    private ArrayList<Ability> effectList;
     private Coordinate prevLocation;
     private Integer team;
     private Double health;
@@ -45,11 +47,13 @@ public class Champion {
         this.maxSpeed = 100.0;
         this.xSpeed = 0.0;
         this.ySpeed = 0.0;
-        this.acceleration = 2.0;
+        this.xAcceleration = 2.0;
+        this.yAcceleration = 2.0;
         this.isUpdating = false;
         this.width = 30.0;
         this.height = 30.0;
         this.abilityList = new AbilityList(fromId);
+        this.effectList = new ArrayList<>();
         this.team = team;
         this.health = 100.0;
         this.maxHealth = 100.0;
@@ -67,40 +71,27 @@ public class Champion {
 
         if (this.up.equals(1.0)) {
             if (this.ySpeed > -this.maxSpeed) {
-                this.ySpeed = this.ySpeed - this.acceleration;
+                this.ySpeed = this.ySpeed - this.yAcceleration;
             }
         }
         if (this.down.equals(1.0)) {
             if (this.ySpeed < this.maxSpeed) {
-                this.ySpeed = this.ySpeed + this.acceleration;
+                this.ySpeed = this.ySpeed + this.yAcceleration;
             }
         }
         if (this.left.equals(1.0)) {
             if (this.xSpeed > -this.maxSpeed) {
-                this.xSpeed = this.xSpeed - this.acceleration;
+                this.xSpeed = this.xSpeed - this.xAcceleration;
             }
         }
         if (this.right.equals(1.0)) {
             if (this.xSpeed < this.maxSpeed) {
-                this.xSpeed = this.xSpeed + this.acceleration;
+                this.xSpeed = this.xSpeed + this.xAcceleration;
             }
         }
 
-        if (this.right.equals(0.0) && this.left.equals(0.0)) {
-            if (this.xSpeed > 0) {
-                this.xSpeed = this.xSpeed - this.acceleration;
-            } else {
-                this.xSpeed = this.xSpeed + this.acceleration;
-            }
-        }
+        this.decelerate(this.xAcceleration, this.yAcceleration);
 
-        if (this.up.equals(0.0) && this.down.equals(0.0)) {
-            if (this.ySpeed > 0) {
-                this.ySpeed = this.ySpeed - this.acceleration;
-            } else {
-                this.ySpeed = this.ySpeed + this.acceleration;
-            }
-        }
         Double yOut = y1 + tickRate * this.ySpeed / 1000;
         Double xOut = x1 + tickRate * this.xSpeed / 1000;
 
@@ -111,7 +102,7 @@ public class Champion {
     }
 
     public boolean isMoving() {
-        return this.up.equals(1.0) || this.down.equals(1.0) || this.left.equals(1.0) || this.right.equals(1.0) || this.xSpeed !=0 || this.ySpeed !=0;
+        return this.up.equals(1.0) || this.down.equals(1.0) || this.left.equals(1.0) || this.right.equals(1.0) || this.xSpeed != 0 || this.ySpeed != 0;
     }
 
     public boolean isEnemy(Champion champion) {
@@ -144,6 +135,44 @@ public class Champion {
         this.setIsUpdating(false);
         this.setLocation(this.getPrevLocation());
         return this.prevLocation;
+    }
+
+    public void decelerate(Double xDecel, Double yDecel) {
+
+        if (this.right.equals(0.0) && this.left.equals(0.0)) {
+            if (this.xSpeed > 0) {
+                if (this.xSpeed - xDecel < 0) {
+                    this.xSpeed = 0.0;
+                } else {
+                    this.xSpeed = this.xSpeed - xDecel;
+                }
+            }
+            if (this.xSpeed < 0) {
+                if (this.xSpeed + xDecel > 0) {
+                    this.xSpeed = 0.0;
+                } else {
+                    this.xSpeed = this.xSpeed + xDecel;
+                }
+            }
+        }
+
+        if (this.up.equals(0.0) && this.down.equals(0.0)) {
+            if (this.ySpeed > 0) {
+                if (this.ySpeed - yDecel < 0) {
+                    this.ySpeed = 0.0;
+                } else {
+                    this.ySpeed = this.ySpeed - yDecel;
+                }
+            }
+            if (this.ySpeed < 0) {
+                if (this.ySpeed + yDecel > 0) {
+                    this.ySpeed = 0.0;
+                } else {
+                    this.ySpeed = this.ySpeed + yDecel;
+                }
+            }
+        }
+
     }
 
 }
