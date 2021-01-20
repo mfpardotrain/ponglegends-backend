@@ -63,7 +63,7 @@ public class CommandInputList {
                 .build();
         AbilityList abilityList = champion.getAbilityList();
         if (!abilityList.onCooldown(name)) {
-            abilityList.useAbility(name, targetCoordinate, champion.getLocation());
+            abilityList.useAbility(name, targetCoordinate, champion.getLocation(), champion);
         }
     }
 

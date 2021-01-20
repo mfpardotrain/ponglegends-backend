@@ -55,17 +55,18 @@ public class GameState {
                     activeAbility.forEach(ability -> {
                         if(ability.getIsUpdating()) {
                             if (ability.getBounds().intersects(gameChampion.getBounds()) & champion.isEnemy(gameChampion)) {
-                                outCoord.add(ability.activateEffect(gameChampion));
+                                outCoord.add(ability.activateEffect(gameChampion, champion));
                                 outCoord.add(ability.getLocation());
                                 ability.setIsUpdating(false);
+                            }
+                            if (!this.terrain.getTerrain().contains(ability.getBounds())) {
+                                outCoord.add(ability.collide());
                             }
                         }
                     });
                 }
             });
 
-            System.out.println(this.terrain.getTerrain().contains(champion.getBounds()));
-            System.out.println(champion.getLocation());
             if (!this.terrain.getTerrain().contains(champion.getBounds())) {
                 outCoord.add(champion.collide());
             }
@@ -74,7 +75,16 @@ public class GameState {
                 outCoord.add(champion.calcDistance(tickRate));
             }
             activeAbility.forEach(ability -> {
-                if (!ability.atLocation()) outCoord.add(ability.calcDistance(tickRate));
+                if (!ability.atLocation() && (ability.getCastDuration() <= (ability.getCastTime()))) {
+                    ability.endCast(champion);
+                    outCoord.add(ability.calcDistance(tickRate));
+                }
+                if (ability.getCastTime() == 0) {
+                    ability.startCast(champion);
+                }
+                if (ability.getCastTime() < ability.getCastDuration()) {
+                    ability.tickCastTime(tickRate);
+                }
                 ability.tickCooldown(tickRate);
             });
         });

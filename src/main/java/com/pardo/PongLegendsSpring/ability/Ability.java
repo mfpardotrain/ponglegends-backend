@@ -6,12 +6,14 @@ import com.pardo.PongLegendsSpring.model.Coordinate;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.awt.*;
 
 @Data
 @AllArgsConstructor
 @Builder
+@NoArgsConstructor
 public class Ability {
     private String abilityName;
     private Coordinate location;
@@ -24,6 +26,8 @@ public class Ability {
     private Double cooldownTime;
     private Double cooldownDuration;
     private Double range;
+    private Double castTime;
+    private Double castDuration;
 
     public Ability(String name, Integer fromId, Coordinate targetLocation, Coordinate startingLocation) {
         this.abilityName = name;
@@ -37,6 +41,8 @@ public class Ability {
         this.range = 200.0;
         this.width = (double) 10;
         this.height = (double) 10;
+        this.castTime = (double) 0;
+        this.castDuration = (double) 0;
     }
 
     public Coordinate calcDistance(Double tickRate) {
@@ -73,6 +79,10 @@ public class Ability {
         this.cooldownTime = this.cooldownTime + (tickRate / 1000);
     }
 
+    public void tickCastTime(Double tickrate) {
+        this.castTime = this.castTime + (tickrate / 1000);
+    }
+
     public boolean onCooldown() {
         return this.cooldownTime < this.cooldownDuration;
     }
@@ -91,18 +101,27 @@ public class Ability {
         return new Rectangle(xMiddle, yMiddle, this.toInt(this.width), this.toInt(this.height));
     }
 
-    public Coordinate activateEffect(Champion champion) {
-        Rectangle intersection = this.getBounds().intersection(champion.getBounds());
+    public void startCast(Champion castingChampion) {}
+    public void endCast(Champion castingChampion) {}
+
+    public Coordinate activateEffect(Champion targetChampion, Champion castingChampion) {
+        Rectangle intersection = this.getBounds().intersection(targetChampion.getBounds());
         Double adjustedX = intersection.getX() + (this.width / 2);
         Double adjustedY = intersection.getY() + (this.height / 2);
         this.setLocation(new Coordinate(adjustedX, adjustedY, this.abilityName, this.fromId));
         this.setTargetLocation(this.location);
-        if (champion.getHealth() - 5 > 0) {
-            champion.setHealth(champion.getHealth() - 5);
+        if (targetChampion.getHealth() - 5 > 0) {
+            targetChampion.setHealth(targetChampion.getHealth() - 5);
         } else {
-            champion.setHealth(0.0);
+            targetChampion.setHealth(0.0);
         }
-        return new Coordinate(champion.getMaxHealth(), champion.getHealth(), "championHealth", champion.getFromId());
+        return new Coordinate(targetChampion.getMaxHealth(), targetChampion.getHealth(), "championHealth", targetChampion.getFromId());
+    }
+
+    public Coordinate collide() {
+        this.setIsUpdating(false);
+        this.setTargetLocation(this.location);
+        return this.location;
     }
 
 }

@@ -1,5 +1,6 @@
 package com.pardo.PongLegendsSpring.ability;
 
+import com.pardo.PongLegendsSpring.champion.Champion;
 import com.pardo.PongLegendsSpring.model.Coordinate;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -21,33 +22,63 @@ public class AbilityList {
         return !this.activeAbility.isEmpty();
     }
 
-    public void useAbility(String name, Coordinate targetLocation, Coordinate startingLocation) {
+    public void useAbility(String name, Coordinate targetLocation, Coordinate startingLocation, Champion castingChampion) {
         switch (name) {
             case "q": {
-                Ability q = new Ability("q", this.fromId, targetLocation, startingLocation);
+                Ability q = new AutoAttack("q", this.fromId, targetLocation, startingLocation);
                 q.setCooldownTime((double) 0);
+                q.setCastTime((double) 0);
                 this.activeAbility.add(q);
                 break;
             }
             case "e": {
-                Ability e = new Ability("e", this.fromId, targetLocation, startingLocation);
+                Ability e = new AutoAttack("e", this.fromId, targetLocation, startingLocation);
+                Ability e1 = new AutoAttack("e", this.fromId, this.calcAngle(targetLocation, startingLocation, 20.0), startingLocation);
+                Ability e2 = new AutoAttack("e", this.fromId, this.calcAngle(targetLocation, startingLocation, 340.0), startingLocation);
                 e.setCooldownTime((double) 0);
+                e1.setCooldownTime((double) 0);
+                e2.setCooldownTime((double) 0);
+                e.setCastTime((double) 0);
+                e1.setCastTime((double) 0);
+                e2.setCastTime((double) 0);
                 this.activeAbility.add(e);
+                this.activeAbility.add(e1);
+                this.activeAbility.add(e2);
                 break;
             }
             case "1": {
-                Ability one = new Ability("1", this.fromId, targetLocation, startingLocation);
+                Ability one = new AutoAttack("1", this.fromId, targetLocation, startingLocation);
                 one.setCooldownTime((double) 0);
+                one.setCastTime((double) 0);
                 this.activeAbility.add(one);
                 break;
             }
             case "3": {
-                Ability three = new Ability("3", this.fromId, targetLocation, startingLocation);
+                Ability three = new Snipe("3", this.fromId, targetLocation, startingLocation);
                 three.setCooldownTime((double) 0);
+                three.setCastTime((double) 0);
                 this.activeAbility.add(three);
                 break;
             }
         }
+    }
+
+    public Coordinate calcAngle(Coordinate targetLocation, Coordinate startingLocation, Double angle) {
+        Double x1 = startingLocation.getX();
+        Double y1 = startingLocation.getY();
+        Double x2 = targetLocation.getX();
+        Double y2 = targetLocation.getY();
+
+        double distance = Math.sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
+        double theta = Math.toDegrees(Math.atan2(y2 - y1, x2 - x1));
+
+        double sinValue = Math.sin(Math.toRadians(theta + angle));
+        double cosValue = Math.cos(Math.toRadians(theta + angle));
+
+        double outX = cosValue * distance;
+        double outY = sinValue * distance;
+
+        return new Coordinate(x1 + outX, y1 + outY, targetLocation.getName(), targetLocation.getFromId());
     }
 
     public boolean onCooldown(String name) {

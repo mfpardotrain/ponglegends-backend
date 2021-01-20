@@ -14,8 +14,7 @@ public class StaticGamestateObject {
     public StaticGamestateObject() {
         int[] xPoints = {0, 0, 1000, 1000, 0};
         int[] yPoints = {0, 1000, 1000, 0, 0};
-        this.path = new GeneralPath(GeneralPath.WIND_EVEN_ODD,
-                xPoints.length);
+        this.path = new GeneralPath(GeneralPath.WIND_EVEN_ODD, xPoints.length);
 
         this.path.moveTo(xPoints[0], yPoints[0]);
         for (int i = 1; i < xPoints.length; i++) {
@@ -25,9 +24,11 @@ public class StaticGamestateObject {
         this.terrain = new Area();
         this.terrain.add(new Area(new Rectangle(0, 0, 1000, 1000)));
         this.terrain.subtract(new Area(new Rectangle(400, 50, 50, 50)));
+        this.terrain.subtract(new Area(new Rectangle(400, 200, 50, 50)));
+        this.terrain.subtract(new Area(new Rectangle(400, 350, 50, 50)));
+        this.terrain.subtract(new Area(new Rectangle(400, 500, 50, 50)));
 
         this.path.closePath();
 
-        System.out.println(this.terrain.getBounds());
     }
 }
