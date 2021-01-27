@@ -29,7 +29,7 @@ public class Snipe extends Ability {
 
     public void endCast(Champion castingChampion) {
         castingChampion.setCanMove(true);
-        Push recoil = new Push("none", castingChampion.getFromId(), this.getTargetLocation(), castingChampion.getLocation());
+        Push recoil = new Push("none", castingChampion.getFromId(), this.getTargetLocation(), castingChampion.getLocation(), 200.0);
         castingChampion.getEffectList().add(recoil);
         this.setHasCasted(true);
     }

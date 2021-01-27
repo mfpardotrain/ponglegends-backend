@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.awt.*;
+import java.awt.geom.Area;
 import java.util.ArrayList;
 
 @Data
@@ -44,7 +45,7 @@ public class Champion {
         this.targetLocation = Coordinate.builder().x(100.0).y(100.0).name("champion").build();
         this.prevLocation = this.location;
         this.fromId = fromId;
-        this.maxSpeed = 100.0;
+        this.maxSpeed = 200.0;
         this.xSpeed = 0.0;
         this.ySpeed = 0.0;
         this.xAcceleration = 2.0;
@@ -65,6 +66,18 @@ public class Champion {
     }
 
     public Coordinate calcDistance(Double tickRate) {
+        Coordinate out = new Coordinate();
+        if (isMoving()) {
+            out = move(tickRate);
+        }
+        return out;
+    }
+
+    public boolean isMoving() {
+        return this.up.equals(1.0) || this.down.equals(1.0) || this.left.equals(1.0) || this.right.equals(1.0) || this.xSpeed != 0 || this.ySpeed != 0;
+    }
+
+    public Coordinate move(Double tickRate) {
         this.prevLocation = this.location;
         Double x1 = this.location.getX();
         Double y1 = this.location.getY();
@@ -101,10 +114,6 @@ public class Champion {
         return outCoord;
     }
 
-    public boolean isMoving() {
-        return this.up.equals(1.0) || this.down.equals(1.0) || this.left.equals(1.0) || this.right.equals(1.0) || this.xSpeed != 0 || this.ySpeed != 0;
-    }
-
     public boolean isEnemy(Champion champion) {
         return !this.team.equals(champion.team);
     }
@@ -117,6 +126,34 @@ public class Champion {
         int xMiddle = (int) Math.round(this.location.xToInt() - (this.width / 2));
         int yMiddle = (int) Math.round(this.location.yToInt() - (this.height / 2));
         return new Rectangle(xMiddle, yMiddle, this.toInt(this.width), this.toInt(this.height));
+    }
+
+    public void bounceTerrain(Area object) {
+        int xMiddle = (int) Math.round(this.location.xToInt() - (this.width / 2));
+        int yMiddle = (int) Math.round(this.location.yToInt() - (this.height / 2));
+        Rectangle xRect = new Rectangle(xMiddle, yMiddle + 2, this.toInt(this.width), this.toInt(this.height) - 4);
+        Rectangle yRect = new Rectangle(xMiddle + 2, yMiddle, this.toInt(this.width) - 4, this.toInt(this.height));
+
+        if (!object.contains(yRect)) {
+            this.ySpeed = this.ySpeed * -1;
+        }
+        if (!object.contains(xRect)) {
+            this.xSpeed = this.xSpeed * -1;
+        }
+    }
+
+    public void bounceChampion(Rectangle object) {
+        int xMiddle = (int) Math.round(this.location.xToInt() - (this.width / 2));
+        int yMiddle = (int) Math.round(this.location.yToInt() - (this.height / 2));
+        Rectangle xRect = new Rectangle(xMiddle, yMiddle + 2, this.toInt(this.width), this.toInt(this.height) - 4);
+        Rectangle yRect = new Rectangle(xMiddle + 2, yMiddle, this.toInt(this.width) - 4, this.toInt(this.height));
+
+        if (object.intersects(yRect)) {
+            this.ySpeed = this.ySpeed * -1;
+        }
+        if (object.intersects(xRect)) {
+            this.xSpeed = this.xSpeed * -1;
+        }
     }
 
     public Boolean isDead() {

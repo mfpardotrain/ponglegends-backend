@@ -7,6 +7,8 @@ import com.pardo.PongLegendsSpring.champion.ChampionList;
 import com.pardo.PongLegendsSpring.model.Coordinate;
 import lombok.Data;
 
+import java.awt.*;
+import java.awt.geom.Area;
 import java.util.Collections;
 import java.util.List;
 
@@ -51,7 +53,7 @@ public class GameState {
             activeEffect.removeIf(ability -> (!ability.getIsUpdating() && !ability.onCooldown()));
             this.championList.toList().stream().filter(x -> !x.equals(champion)).forEach(gameChampion -> {
                 if (champion.getBounds().intersects(gameChampion.getBounds())) {
-                    outCoord.add(champion.collide());
+                    champion.bounceChampion(gameChampion.getBounds());
                 }
                 if (!activeAbility.isEmpty()) {
                     activeAbility.forEach(ability -> {
@@ -73,7 +75,7 @@ public class GameState {
             processAbility(activeEffect, champion, tickRate, outCoord, true);
 
             if (!this.terrain.getTerrain().contains(champion.getBounds())) {
-                outCoord.add(champion.collide());
+                champion.bounceTerrain(this.terrain.getTerrain());
             }
 
             if (champion.isMoving() && champion.getCanMove()) {
@@ -122,12 +124,12 @@ public class GameState {
         Champion championBlueFour = new Champion("blue", 4, 0);
         Champion championBlueFive = new Champion("blue", 5, 0);
 
-        championRedZero.setLocation(Coordinate.builder().name("champion").x(50.0).y(50.0).fromId(0).build());
-        championRedOne.setLocation(Coordinate.builder().name("champion").x(50.0).y(100.0).fromId(1).build());
-        championRedTwo.setLocation(Coordinate.builder().name("champion").x(50.0).y(150.0).fromId(2).build());
-        championBlueThree.setLocation(Coordinate.builder().name("champion").x(500.0).y(50.0).fromId(3).build());
-        championBlueFour.setLocation(Coordinate.builder().name("champion").x(500.0).y(100.0).fromId(4).build());
-        championBlueFive.setLocation(Coordinate.builder().name("champion").x(500.0).y(150.0).fromId(5).build());
+        championRedZero.setLocation(Coordinate.builder().name("red").x(50.0).y(125.0).fromId(0).build());
+        championRedOne.setLocation(Coordinate.builder().name("red").x(50.0).y(275.0).fromId(1).build());
+        championRedTwo.setLocation(Coordinate.builder().name("red").x(50.0).y(425.0).fromId(2).build());
+        championBlueThree.setLocation(Coordinate.builder().name("blue").x(800.0).y(125.0).fromId(3).build());
+        championBlueFour.setLocation(Coordinate.builder().name("blue").x(800.0).y(275.0).fromId(4).build());
+        championBlueFive.setLocation(Coordinate.builder().name("blue").x(800.0).y(425.0).fromId(5).build());
         this.championList = new ChampionList(championRedZero, championRedOne, championRedTwo,
                 championBlueThree, championBlueFour, championBlueFive);
     }

@@ -8,13 +8,15 @@ import lombok.Data;
 public class Push extends Ability {
     Double prevXAccel;
     Double prevYAccel;
+    Double speed;
 
-    public Push(String name, Integer fromId, Coordinate targetLocation, Coordinate startingLocation) {
+    public Push(String name, Integer fromId, Coordinate targetLocation, Coordinate startingLocation, Double speed) {
         super(name, fromId, targetLocation, startingLocation);
         this.setCooldownDuration(0.0);
         this.setCastDuration(1.0);
         this.setCastTime(0.0);
         this.setCooldownTime(0.0);
+        this.speed = speed;
     }
 
     public void startCast(Champion castingChampion) {
@@ -42,8 +44,8 @@ public class Push extends Ability {
         double sinValue = Math.sin(Math.toRadians(theta));
         double cosValue = Math.cos(Math.toRadians(theta));
 
-        double outX = cosValue * -200;
-        double outY = sinValue * -200;
+        double outX = cosValue * -this.speed;
+        double outY = sinValue * -this.speed;
 
         castingChampion.setXAcceleration(Math.abs(outX) / 50);
         castingChampion.setYAcceleration(Math.abs(outY) / 50);
