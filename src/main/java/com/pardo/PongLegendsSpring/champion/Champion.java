@@ -38,6 +38,7 @@ public class Champion {
     private Double left;
     private Double right;
     private Boolean canMove;
+    private Boolean flipRotation;
 
     public Champion(String name, Integer fromId, Integer team) {
         this.championName = name;
@@ -63,6 +64,7 @@ public class Champion {
         this.left = 0.0;
         this.right = 0.0;
         this.canMove = true;
+        this.flipRotation = false;
     }
 
     public Coordinate calcDistance(Double tickRate) {
@@ -140,6 +142,7 @@ public class Champion {
         if (!object.contains(xRect)) {
             this.xSpeed = this.xSpeed * -1;
         }
+        this.flipRotation = !this.flipRotation;
     }
 
     public void bounceChampion(Rectangle object) {
@@ -154,6 +157,7 @@ public class Champion {
         if (object.intersects(xRect)) {
             this.xSpeed = this.xSpeed * -1;
         }
+        this.flipRotation = !this.flipRotation;
     }
 
     public Boolean isDead() {

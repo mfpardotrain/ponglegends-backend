@@ -84,21 +84,25 @@ public class Tether extends Ability {
             castingChampion.setYSpeed(xSpeed);
         }
 
-        double accelMag = 20.0 * 10.0 / this.length;
-        double theta = -1 * Math.atan2(y1 - y2, x1 - x2);
+        double accelMag = 40.0 * 40.0 / this.length;
+        double theta2 = Math.atan2(y2 - y1, x2 - x1);
+
+        double theta = 0.0;
+        if (castingChampion.getFlipRotation()) {
+            theta = -1 * Math.toRadians(Math.toDegrees(theta2) + 90);
+        } else {
+            theta = -1 * Math.toRadians(Math.toDegrees(theta2) - 90);
+        }
 
         double xAccel = -1 * Math.cos(theta) * accelMag;
         double yAccel = Math.sin(theta) * accelMag;
 
-        double theta2 = Math.atan2(y2 - y1, x2 - x1);
         double xPos = -1 * (Math.cos(theta2) * this.length) + targetChampion.getLocation().getX();
         double yPos = -1 * (Math.sin(theta2) * this.length) + targetChampion.getLocation().getY();
         castingChampion.setLocation(new Coordinate(xPos, yPos, castingChampion.getChampionName(), castingChampion.getFromId()));
 
-        System.out.println("theta " + Math.toDegrees(theta));
-
-        castingChampion.setXSpeed(castingChampion.getXSpeed() + xAccel);
-        castingChampion.setYSpeed(castingChampion.getYSpeed() + yAccel);
+        castingChampion.setXSpeed(xAccel * 20);
+        castingChampion.setYSpeed(yAccel * 20);
 
     }
 
