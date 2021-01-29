@@ -22,6 +22,7 @@ public class AutoAttack extends Ability {
         Double adjustedY = intersection.getY() + (this.getWidth() / 2);
         this.setLocation(new Coordinate(adjustedX, adjustedY, this.getAbilityName(), this.getFromId()));
         this.setTargetLocation(this.getLocation());
+        this.setIsUpdating(false);
         if (targetChampion.getHealth() - 5 > 0) {
             targetChampion.setHealth(targetChampion.getHealth() - 5);
         } else {

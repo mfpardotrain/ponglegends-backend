@@ -71,12 +71,19 @@ public class Ability {
         Coordinate outCoord = Coordinate.builder().x(xOut).y(yOut).name(this.abilityName).fromId(this.fromId).build();
 
         if (distance < (moveRate / 1000 * tickRate)) {
-            this.isUpdating = false;
+            this.setLocation(this.targetLocation);
             outCoord = this.targetLocation;
         }
         this.setLocation(outCoord);
 
         return outCoord;
+    }
+
+    public Boolean getIsAbilityUpdating() {
+        if (this.targetLocation.equals(this.location)) {
+           this.isUpdating = false;
+        }
+        return this.isUpdating;
     }
 
     public void tickCooldown(Double tickRate) {
@@ -87,11 +94,11 @@ public class Ability {
         this.castTime = this.castTime + (tickrate / 1000);
     }
 
-    public boolean onCooldown() {
+    public Boolean onCooldown() {
         return this.cooldownTime < this.cooldownDuration;
     }
 
-    public boolean atLocation() {
+    public Boolean atLocation() {
         return this.location.equals(this.targetLocation);
     }
 
@@ -114,6 +121,7 @@ public class Ability {
         Double adjustedY = intersection.getY() + (this.height / 2);
         this.setLocation(new Coordinate(adjustedX, adjustedY, this.abilityName, this.fromId));
         this.setTargetLocation(this.location);
+        this.setIsUpdating(false);
         if (targetChampion.getHealth() - 5 > 0) {
             targetChampion.setHealth(targetChampion.getHealth() - 5);
         } else {
@@ -128,5 +136,7 @@ public class Ability {
         return this.location;
     }
 
+    public void firstCast() { }
+    public void secondCast(Champion castingChampion) { }
 }
 

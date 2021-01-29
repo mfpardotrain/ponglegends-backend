@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Data
 @AllArgsConstructor
@@ -25,8 +26,12 @@ public class AbilityList {
     public void useAbility(String name, Coordinate targetLocation, Coordinate startingLocation, Champion castingChampion) {
         switch (name) {
             case "q": {
-                Ability q = new AutoAttack("q", this.fromId, targetLocation, startingLocation);
-                this.activeAbility.add(q);
+                if (isInAbilityList("q", this.fromId)) {
+                    this.activeAbility.get(indexOfAbility("q", this.fromId)).secondCast(castingChampion);
+                } else {
+                    Ability q = new Tether("q", this.fromId, targetLocation, startingLocation);
+                    this.activeAbility.add(q);
+                }
                 break;
             }
             case "e": {
@@ -73,13 +78,35 @@ public class AbilityList {
         return new Coordinate(x1 + outX, y1 + outY, targetLocation.getName(), targetLocation.getFromId());
     }
 
-    public boolean onCooldown(String name) {
+    public Boolean onCooldown(String name) {
         Ability lastAbility = this.activeAbility.stream().filter(ability -> ability.getAbilityName().equals(name)).reduce((first, second) -> second).orElse(null);
         if (lastAbility == null) {
             return false;
         } else {
             return lastAbility.onCooldown();
         }
+    }
+
+    public Boolean isInAbilityList(String name, Integer fromId) {
+        AtomicReference<Boolean> out = new AtomicReference<>(false);
+
+        this.activeAbility.forEach(el -> {
+            if (el.getAbilityName().equals(name) && el.getFromId().equals(fromId)) {
+                out.set(true);
+            }
+        });
+        return out.get();
+    }
+
+    public Integer indexOfAbility(String name, Integer fromId) {
+        AtomicReference<Integer> out = new AtomicReference<>(null);
+
+        this.activeAbility.forEach(el -> {
+            if (el.getAbilityName().equals(name) && el.getFromId().equals(fromId)) {
+                out.set(this.activeAbility.indexOf(el));
+            }
+        });
+        return out.get();
     }
 
 }

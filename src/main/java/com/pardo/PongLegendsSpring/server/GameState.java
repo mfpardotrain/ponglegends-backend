@@ -7,8 +7,6 @@ import com.pardo.PongLegendsSpring.champion.ChampionList;
 import com.pardo.PongLegendsSpring.model.Coordinate;
 import lombok.Data;
 
-import java.awt.*;
-import java.awt.geom.Area;
 import java.util.Collections;
 import java.util.List;
 
@@ -49,8 +47,9 @@ public class GameState {
         updatingChampion.forEach(champion -> {
             List<Ability> activeAbility = champion.getActiveAbility();
             List<Ability> activeEffect = champion.getEffectList();
-            activeAbility.removeIf(ability -> (!ability.getIsUpdating() && !ability.onCooldown()));
-            activeEffect.removeIf(ability -> (!ability.getIsUpdating() && !ability.onCooldown()));
+            // Cleanup ability lists if they are done updating and not on cooldown
+            activeAbility.removeIf(ability -> (!ability.getIsAbilityUpdating() && !ability.onCooldown()));
+            activeEffect.removeIf(ability -> (!ability.getIsAbilityUpdating() && !ability.onCooldown()));
             this.championList.toList().stream().filter(x -> !x.equals(champion)).forEach(gameChampion -> {
                 if (champion.getBounds().intersects(gameChampion.getBounds())) {
                     champion.bounceChampion(gameChampion.getBounds());
@@ -61,7 +60,6 @@ public class GameState {
                             if (ability.getBounds().intersects(gameChampion.getBounds()) & champion.isEnemy(gameChampion)) {
                                 outCoord.add(ability.activateEffect(gameChampion, champion));
                                 outCoord.add(ability.getLocation());
-                                ability.setIsUpdating(false);
                             }
                             if (!this.terrain.getTerrain().contains(ability.getBounds())) {
                                 outCoord.add(ability.collide());

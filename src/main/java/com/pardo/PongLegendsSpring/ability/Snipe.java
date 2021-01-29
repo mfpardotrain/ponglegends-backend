@@ -40,6 +40,7 @@ public class Snipe extends Ability {
         Double adjustedY = intersection.getY() + (this.getWidth() / 2);
         this.setLocation(new Coordinate(adjustedX, adjustedY, this.getAbilityName(), this.getFromId()));
         this.setTargetLocation(this.getLocation());
+        this.setIsUpdating(false);
         if (targetChampion.getHealth() - 30 > 0) {
             targetChampion.setHealth(targetChampion.getHealth() - 30);
         } else {
@@ -47,5 +48,7 @@ public class Snipe extends Ability {
         }
         return new Coordinate(targetChampion.getMaxHealth(), targetChampion.getHealth(), "championHealth", targetChampion.getFromId());
     }
+
+
 
 }

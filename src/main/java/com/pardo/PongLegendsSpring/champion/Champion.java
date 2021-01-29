@@ -48,8 +48,8 @@ public class Champion {
         this.maxSpeed = 200.0;
         this.xSpeed = 0.0;
         this.ySpeed = 0.0;
-        this.xAcceleration = 2.0;
-        this.yAcceleration = 2.0;
+        this.xAcceleration = 1.0;
+        this.yAcceleration = 1.0;
         this.isUpdating = false;
         this.width = 30.0;
         this.height = 30.0;
@@ -103,7 +103,7 @@ public class Champion {
             }
         }
 
-        this.decelerate(this.xAcceleration, this.yAcceleration);
+        // this.decelerate(this.xAcceleration, this.yAcceleration);
 
         Double yOut = y1 + tickRate * this.ySpeed / 1000;
         Double xOut = x1 + tickRate * this.xSpeed / 1000;
