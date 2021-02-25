@@ -49,8 +49,8 @@ public class Champion {
         this.maxSpeed = 200.0;
         this.xSpeed = 0.0;
         this.ySpeed = 0.0;
-        this.xAcceleration = 1.0;
-        this.yAcceleration = 1.0;
+        this.xAcceleration = 0.5;
+        this.yAcceleration = 0.5;
         this.isUpdating = false;
         this.width = 30.0;
         this.height = 30.0;
@@ -148,8 +148,8 @@ public class Champion {
     public void bounceChampion(Rectangle object) {
         int xMiddle = (int) Math.round(this.location.xToInt() - (this.width / 2));
         int yMiddle = (int) Math.round(this.location.yToInt() - (this.height / 2));
-        Rectangle xRect = new Rectangle(xMiddle, yMiddle + 2, this.toInt(this.width), this.toInt(this.height) - 4);
-        Rectangle yRect = new Rectangle(xMiddle + 2, yMiddle, this.toInt(this.width) - 4, this.toInt(this.height));
+        Rectangle xRect = new Rectangle(xMiddle, yMiddle + 4, this.toInt(this.width), this.toInt(this.height) - 4);
+        Rectangle yRect = new Rectangle(xMiddle + 4, yMiddle, this.toInt(this.width) - 4, this.toInt(this.height));
 
         if (object.intersects(yRect)) {
             this.ySpeed = this.ySpeed * -1;

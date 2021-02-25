@@ -62,6 +62,10 @@ public class GameState {
                                 outCoord.add(ability.getLocation());
                             }
                             if (!this.terrain.getTerrain().contains(ability.getBounds())) {
+                                // TODO: tether to terrain
+/*                                if (ability.getAbilityName().equals("q")) {
+                                    outCoord.add(ability.activateEffect(gameChampion, champion));
+                                }*/
                                 outCoord.add(ability.collide());
                             }
                         }
